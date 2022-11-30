@@ -1,10 +1,9 @@
 from io import StringIO
 import numpy as np
-import pandas as pd
 
 def test():
-  input="""
-v...>>.vv>
+  input = \
+"""v...>>.vv>
 .vv>>.vv..
 >>.>v>...v
 >>v>>.>.v.
@@ -12,48 +11,35 @@ v>v.vv.v..
 >.>>..v...
 .vv..>.>v.
 v.v..>>v.v
-....v..v.>
-"""
-  return pd.read_fwf(StringIO(input), widths=[1] * 10, header=None).values
+....v..v.>"""
+  return np.array([list(line) for line in input.split("\n")])
+
 
 
 def live():
-  return pd.read_fwf("2021/25/input.txt", widths=[1] * 139, header=None).values
+  with open("2021/25/input.txt") as fd:
+    return np.array([list(line) for line in fd.read().splitlines()])
 
 
 def move_r(a: np.ndarray) -> tuple[np.ndarray, int]:
-  nr = a.shape[0]
   nc = a.shape[1]
-  move = np.zeros(a.shape, dtype=bool)
-  # flag
-  for r in range(a.shape[0]):
-    for c in range(a.shape[1]):
-      if a[r, c] == ">" and a[r, (c + 1) % nc] == ".":
-        move[r, c] = True
-  # move
-  for r in range(a.shape[0]):
-    for c in range(a.shape[1]):
-      if move[r, c]:
-        a[r, c] = "."
-        a[r, (c + 1) % nc] = ">"
+  # work out who moves
+  move = np.logical_and(a == ">", np.roll(a, -1, axis=1) == ".")
+  # do the move
+  for r, c in np.argwhere(move):
+    a[r, c] = "."
+    a[r, (c + 1) % nc] = ">"
   return a, move.sum()
 
 
 def move_d(a: np.ndarray) -> tuple[np.ndarray, int]:
   nr = a.shape[0]
-  nc = a.shape[1]
-  move = np.zeros(a.shape, dtype=bool)
-  # flag
-  for r in range(a.shape[0]):
-    for c in range(a.shape[1]):
-      if a[r, c] == "v" and a[(r + 1) % nr, c] == ".":
-        move[r, c] = True
-  # move
-  for r in range(a.shape[0]):
-    for c in range(a.shape[1]):
-      if move[r, c]:
-        a[r, c] = "."
-        a[(r + 1) % nr, c] = "v"
+  # work out who moves
+  move = np.logical_and(a == "v", np.roll(a, -1, axis=0) == ".")
+  # do the move
+  for r, c in np.argwhere(move):
+    a[r, c] = "."
+    a[(r + 1) % nr, c] = "v"
   return a, move.sum()
 
 
@@ -70,6 +56,7 @@ def loop(a: np.ndarray) -> tuple[np.ndarray, int]:
     i += 1
     if not n:
       break
+    #break
   return a, i
 
 
@@ -87,6 +74,7 @@ def part1(a: np.ndarray) -> None:
   display(a)
   print(f"{n} iterations")
 
+
 if __name__ == "__main__":
-  part1(test())
+  # part1(test())
   part1(live())
