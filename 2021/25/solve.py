@@ -15,7 +15,6 @@ v.v..>>v.v
   return np.array([list(line) for line in input.split("\n")])
 
 
-
 def live():
   with open("2021/25/input.txt") as fd:
     return np.array([list(line) for line in fd.read().splitlines()])
@@ -23,23 +22,23 @@ def live():
 
 def move_r(a: np.ndarray) -> tuple[np.ndarray, int]:
   nc = a.shape[1]
-  # work out who moves
-  move = np.logical_and(a == ">", np.roll(a, -1, axis=1) == ".")
-  # do the move
-  for r, c in np.argwhere(move):
-    a[r, c] = "."
-    a[r, (c + 1) % nc] = ">"
-  return a, move.sum()
+  return move_impl(a, ">", 1, lambda r, c: (r, ((c + 1) % nc)))
 
 
 def move_d(a: np.ndarray) -> tuple[np.ndarray, int]:
   nr = a.shape[0]
+  return move_impl(a, "v", 0, lambda r, c: ((r + 1) % nr, c))
+
+
+# @profile kernprof -lv 2021/25/solve.py
+def move_impl(a: np.ndarray, animal: str, axis: int, mapper) -> tuple[np.ndarray, int]:
+  nr = a.shape[axis]
   # work out who moves
-  move = np.logical_and(a == "v", np.roll(a, -1, axis=0) == ".")
+  move = np.logical_and(a == animal, np.roll(a, -1, axis=axis) == ".")
   # do the move
   for r, c in np.argwhere(move):
     a[r, c] = "."
-    a[(r + 1) % nr, c] = "v"
+    a[mapper(r, c)] = animal
   return a, move.sum()
 
 
@@ -56,7 +55,7 @@ def loop(a: np.ndarray) -> tuple[np.ndarray, int]:
     i += 1
     if not n:
       break
-    #break
+    # break
   return a, i
 
 
