@@ -33,14 +33,16 @@ def solve_impl(a: list[str]) -> list[int]:
 def solve1(a: list[str]) -> int:
   return max(solve_impl(a))
 
+
 def solve2(a: list[str]) -> list[int]:
   return sum(sorted(solve_impl(a))[-3:])
 
+
 if __name__ == "__main__":
-  print(solve1(test()))
-  print(solve1(live()))
-  print(solve2(test()))
-  print(solve2(live()))
+  print(f"part 1 test = {solve1(test())}")
+  print(f"part 1 live = {solve1(live())}")
+  print(f"part 2 test = {solve2(test())}")
+  print(f"part 2 live = {solve2(live())}")
 
 # 24000
 # 67027
