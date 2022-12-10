@@ -1,4 +1,4 @@
-
+from functools import reduce
 import numpy as np
 
 def test() -> list[str]:
@@ -40,17 +40,17 @@ def tail_move(h: np.ndarray, t: np.ndarray) -> np.ndarray:
     raise RuntimeError(f"too far: {delta}")
 
 
-def solve1(a: list[str]) -> int:
-  split = [s.split(" ") for s in a]
-  moves = []
-  for d in split:
-    moves.extend([d[0]]*int(d[1]))
+def unroll(moves: list[str]) -> list[str]:
+  return reduce(list.__add__, ([d[0]]*int(d[1]) for d in (m.split(" ") for m in moves)))
+
+
+def solve1(moves: list[str]) -> int:
 
   h = np.array([0, 0])
   t = np.array([0, 0])
 
   tail_history = [(t[0], t[1])]
-  for m in moves:
+  for m in unroll(moves):
     h += v[m]
     t += tail_move(h, t)
     tail_history.append((t[0], t[1]))
@@ -58,17 +58,11 @@ def solve1(a: list[str]) -> int:
   return len(set(tail_history))
 
 
-def solve2(a: list[str]) -> int:
-  split = [s.split(" ") for s in a]
-  moves = []
-  for d in split:
-    moves.extend([d[0]]*int(d[1]))
-
-
+def solve2(moves: list[str]) -> int:
   rope = [np.array([0, 0]) for _ in range(10)]
 
   tail_history = [(rope[-1][0], rope[-1][1])]
-  for m in moves:
+  for m in unroll(moves):
     rope[0] += v[m]
     for i in range(9):
       rope[i+1] += tail_move(rope[i], rope[i+1])
@@ -81,3 +75,8 @@ if __name__ == "__main__":
   print(f"part 1 live = {solve1(live())}")
   print(f"part 2 test = {solve2(test())}")
   print(f"part 2 live = {solve2(live())}")
+
+# part 1 test = 13
+# part 1 live = 6745
+# part 2 test = 1
+# part 2 live = 2793
