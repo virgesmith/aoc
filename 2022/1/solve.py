@@ -26,8 +26,8 @@ def live():
 
 def solve_impl(a: list[str]) -> list[int]:
   splits = [i for i in range(len(a)) if a[i] == ""]
-  brackets = [[int(n) for n in a[i + 1:j]] for i, j in zip([-1]+splits, splits+[len(a)])]
-  return [sum(elf) for elf in brackets]
+  brackets = ((int(n) for n in a[i + 1:j]) for i, j in zip([-1]+splits, splits+[len(a)]))
+  return (sum(elf) for elf in brackets)
 
 
 def solve1(a: list[str]) -> int:

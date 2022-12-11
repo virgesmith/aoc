@@ -40,8 +40,7 @@ def solve1(a: tuple) -> int:
     for _ in range(n):
       stacks[dst].append(stacks[src].pop())
 
-  result = [stacks[s][-1][1] for s in stacks]
-  return "".join(result)
+  return "".join(stacks[s][-1][1] for s in stacks)
 
 def solve2(a: list[str]) -> int:
   stacks, moves = a
@@ -54,8 +53,7 @@ def solve2(a: list[str]) -> int:
     for _ in range(n):
       stacks[src].pop()
 
-  result = [stacks[s][-1][1] for s in stacks]
-  return "".join(result)
+  return "".join(stacks[s][-1][1] for s in stacks)
 
 
 if __name__ == "__main__":

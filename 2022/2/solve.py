@@ -22,12 +22,12 @@ def gen_lookup2() -> dict[str, int]:
 
 def solve1(strategy: list[str]) -> int:
   lookup = gen_lookup()
-  return sum([lookup[s] for s in strategy])
+  return sum(lookup[s] for s in strategy)
 
 
 def solve2(strategy: list[str]):
   lookup = gen_lookup2()
-  return sum([lookup[s] for s in strategy])
+  return sum(lookup[s] for s in strategy)
 
 
 if __name__ == "__main__":

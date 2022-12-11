@@ -16,27 +16,25 @@ def live() -> list[str]:
 
 
 def solve1(a: list[str]) -> int:
-  split = [[s[0].split("-"), s[1].split("-")] for s in [s.split(",") for s in a]]
+  split = ((s[0].split("-"), s[1].split("-")) for s in (s.split(",") for s in a))
 
   def is_subset(s: list[list[str]]) -> bool:
     s1 = set(range(int(s[0][0]), int(s[0][1])+1))
     s2 = set(range(int(s[1][0]), int(s[1][1])+1))
     return s1.issubset(s2) or s2.issubset(s1)
 
-  subsets = [1 for s in split if is_subset(s)]
-  return len(subsets)
+  return sum(1 for s in split if is_subset(s))
 
 
 def solve2(a: list[str]) -> int:
-  split = [[s[0].split("-"), s[1].split("-")] for s in [s.split(",") for s in a]]
+  split = ((s[0].split("-"), s[1].split("-")) for s in (s.split(",") for s in a))
 
   def intersects(s: list[list[str]]) -> bool:
     s1 = set(range(int(s[0][0]), int(s[0][1])+1))
     s2 = set(range(int(s[1][0]), int(s[1][1])+1))
     return len(s1.intersection(s2))
 
-  intersected = [1 for s in split if intersects(s)]
-  return len(intersected)
+  return sum(1 for s in split if intersects(s))
 
 
 if __name__ == "__main__":

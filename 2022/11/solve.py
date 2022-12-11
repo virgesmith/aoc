@@ -140,7 +140,7 @@ def solve2(monkeys: list[Monkey]) -> int:
 
 
 if __name__ == "__main__":
-  print(f"part 1 test = {solve1(test())}")
+  assert solve1(test()) == 10605
   print(f"part 1 live = {solve1(live())}")
-  print(f"part 2 test = {solve2(test())}")
+  assert solve2(test()) == 2713310158
   print(f"part 2 live = {solve2(live())}")

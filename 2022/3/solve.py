@@ -25,14 +25,12 @@ def mapping(s: str) -> int:
 
 
 def solve1(a: set[str]) -> int:
-  return sum([mapping({*s[:len(s)//2]} & {*s[len(s)//2:]}) for s in a])
+  return sum(mapping({*s[:len(s)//2]} & {*s[len(s)//2:]}) for s in a)
 
 
 def solve2(a: list[str]) -> int:
-
   g = list(zip(a[::3], a[1::3], a[2::3]))
-
-  return sum([mapping({*s[0]} & {*s[1]} & {*s[2]}) for s in g])
+  return sum(mapping({*s[0]} & {*s[1]} & {*s[2]}) for s in g)
 
 
 if __name__ == "__main__":
