@@ -56,6 +56,19 @@ def count_faces(lava: np.ndarray, extent: bounds_t) -> int:
   return faces
 
 
+def neighbours(array: np.ndarray, point: point_t) -> set[point_t]:
+  x, y, z = point
+  xmax, ymax, zmax = array.shape
+  return set((
+    (max(0, x - 1), y, z),
+    (min(x + 1, xmax - 1), y, z),
+    (x, max(0, y - 1), z),
+    (x, min(y + 1, ymax - 1), z),
+    (x, y, max(0, z - 1)),
+    (x, y, min(z + 1, zmax - 1))
+  ))
+
+
 def flood_face_count(array: np.ndarray, point: point_t) -> int:
   xmax, ymax, zmax = array.shape
   visited = np.zeros(array.shape, dtype=bool)
@@ -67,19 +80,7 @@ def flood_face_count(array: np.ndarray, point: point_t) -> int:
     if array[node] == current and visited[node]:
       continue
     if array[node] == current:
-      x, y, z = node
-      if x > 0:
-        queue.append((x - 1, y, z))
-      if x < xmax - 1:
-        queue.append((x + 1, y, z))
-      if y > 0:
-        queue.append((x, y - 1, z))
-      if y < ymax - 1:
-        queue.append((x, y + 1, z))
-      if z > 0:
-        queue.append((x, y, z - 1))
-      if z < zmax - 1:
-        queue.append((x, y, z + 1))
+      queue.extend(neighbours(array, node))
     else:
       count += 1
     visited[node] = True
