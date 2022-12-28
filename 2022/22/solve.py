@@ -140,7 +140,6 @@ def step(p, orient, bounds) -> tuple[int, int]:
       return (p[Y] - 1) % bounds[Y], p[X]
 
 
-
 def step_cube(p, orient, map, mappings) -> tuple[tuple[int, int], int]:
   if orient == LEFT:
     p_new = p[Y], p[X] - 1

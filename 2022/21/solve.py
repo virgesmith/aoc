@@ -1,5 +1,9 @@
-from typing import Callable, Protocol
+from typing import Optional, Protocol
 
+
+UNARY_OPS = {
+  "-": lambda x: -x,
+}
 
 BINARY_OPS = {
   "+": lambda x, y: x + y,
@@ -10,37 +14,86 @@ BINARY_OPS = {
 
 
 class Expression(Protocol):
-  def eval(self, lookup: dict[str, "Expression"]) -> int:
+  def eval(self) -> int:
+    ...
+
+  def find(self, name: str) -> Optional["Expression"]:
     ...
 
 
-class Value:
-  def __init__(self, n: int):
+class Scalar:
+  def __init__(self, name: str, n: int):
+    self.name = name
     self.n = n
 
-  def eval(self, _: dict[str, Expression]) -> int:
+  def eval(self) -> int:
     return self.n
+
+  def find(self, name: str) -> Expression | None:
+    if self.name == name:
+      return self
+    return None
+
+  def __repr__(self) -> str:
+    return f'{{"{self.name}": {self.n}}}'
 
 
 class BinaryOp:
-  def __init__(self, op: Callable[[int, int], int], left: str, right: str):
+  def __init__(self, name: str, op: str, left: Expression, right: Expression):
+    self.name = name
     self.op = op
     self.left = left
     self.right = right
 
-  def eval(self, lookup: dict[str, Expression]):
-    return self.op(lookup[self.left].eval(lookup), lookup[self.right].eval(lookup))
+  def eval(self)-> int:
+    return BINARY_OPS[self.op](self.left.eval(), self.right.eval())
+
+  def find(self, name: str) -> Expression | None:
+    if self.name == name:
+      return self
+    left = self.left.find(name)
+    if left:
+      return left
+    return self.right.find(name)
+
+  def __repr__(self) -> str:
+    return f'{{"{self.name}": {{"{self.op}": [{self.left}, {self.right}]}}}}'
 
 
-def expression_factory(a: list[str]) -> Expression:
-  if len(a) == 1:
-    return Value(int(a[0]))
-  elif len(a) == 3:
-    return BinaryOp(BINARY_OPS[a[1]], a[0], a[2])
+class UnaryOp:
+  def __init__(self, name: str, op: str, operand: Expression) -> None:
+    self.name = name
+    self.op = op
+    self.operand = operand
+
+  def eval(self) -> int:
+    return UNARY_OPS[self.op](self.operand.eval())
+
+  def find(self, name: str) -> Expression | None:
+    if self.name == name:
+      return self
+    return self.operand.find(name)
+
+  def __repr__(self) -> str:
+    return f'{{"{self.name}": {{"{self.op}": {self.operand}}}}}'
+
+
+def expression_factory(expression_id: str, all_expressions: dict[str, list[str]]) -> Expression:
+  expression = all_expressions[expression_id]
+  if len(expression) == 1:
+    return Scalar(expression_id, int(expression[0]))
+  if len(expression) == 2:
+    return UnaryOp(expression_id, expression[0], expression_factory(expression[1], all_expressions))
+  elif len(expression) == 3:
+    return BinaryOp(expression_id,
+                    expression[1],
+                    expression_factory(expression[0], all_expressions),
+                    expression_factory(expression[2], all_expressions))
   raise ValueError("expression not understood")
 
 
-def test() -> dict[str, Expression]:
+
+def test() -> dict[str, list[str]]:
   data = """root: pppw + sjmn
 dbpl: 5
 cczh: sllz + lgvd
@@ -56,32 +109,35 @@ pppw: cczh / lfqf
 lgvd: ljgn * ptdq
 drzm: hmdt - zczc
 hmdt: 32"""
-  return {line.split(": ")[0]: expression_factory(line.split(": ")[1].split(" ")) for line in data.splitlines()}
+  return {line.split(": ")[0]: line.split(": ")[1].split(" ") for line in data.splitlines()}
 
 
-def live() -> dict[str, Expression]:
+def live() -> dict[str, list[str]]:
   with open("2022/21/input.txt") as fd:
-    return {line.split(": ")[0]: expression_factory(line.split(": ")[1].split(" ")) for line in fd.read().splitlines()}
+    return {line.split(": ")[0]: line.split(": ")[1].split(" ") for line in fd.read().splitlines()}
 
 
-def solve1(expressions: dict[str, Expression]) -> int:
-  return int(expressions["root"].eval(expressions))
+def solve1(expressions: dict[str, list[str]]) -> int:
+  tree = expression_factory("root", expressions)
+  return int(tree.eval())
 
 
-def solve2(expressions: dict[str, Expression]) -> int:
-  expressions["root"] = BinaryOp(BINARY_OPS["-"], expressions["root"].left, expressions["root"].right)
+def solve2(expressions: dict[str, list[str]]) -> int:
+  expressions["root"] = [expressions["root"][0], "-", expressions["root"][2]]
+  tree = expression_factory("root", expressions)
+  humn = tree.find("humn")
 
   dx = 0.1
-  f = expressions["root"].eval(expressions)
+  f = tree.eval()
   while f != 0:
-    x = expressions["humn"].n
+    x = humn.n
     # 1st deriv
-    expressions["humn"].n += dx
-    df = (expressions["root"].eval(expressions) - f) / dx
+    humn.n += dx
+    df = (tree.eval() - f) / dx
     # Newton
     x -= f / df
-    expressions["humn"].n = x
-    f = expressions["root"].eval(expressions)
+    humn.n = x
+    f = tree.eval()
   return int(x)
 
 
