@@ -1,7 +1,5 @@
-
 from io import StringIO
 
-import re
 
 def test1():
     input = """\
@@ -17,7 +15,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
 def live():
     with open("2023/2/input.txt") as fd:
         return fd.read().splitlines()
-
 
 
 def solve1(strings: list[str]) -> int:
@@ -36,7 +33,7 @@ def solve1(strings: list[str]) -> int:
         if within_limit:
             sum += game
     return sum
-    
+
 
 def solve2(strings: list[str]) -> list[int]:
     sum = 0

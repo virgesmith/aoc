@@ -1,7 +1,5 @@
-
 from io import StringIO
 
-import re
 
 def test1():
     input = """\
@@ -50,10 +48,12 @@ def last(string: str, digits: dict[str, int]) -> int:
 def solve1(strings: list[str]) -> int:
     digits = {str(d): d for d in range(1, 10)}
     return sum(first(s, digits) * 10 + last(s, digits) for s in strings)
-    
+
 
 def solve2(strings: list[str]) -> list[int]:
-    digits = {str(d): d for d in range(1, 10)} | dict(one=1, two=2, three=3, four=4, five=5, six=6, seven=7, eight=8, nine=9)
+    digits = {str(d): d for d in range(1, 10)} | dict(
+        one=1, two=2, three=3, four=4, five=5, six=6, seven=7, eight=8, nine=9
+    )
     return sum(first(s, digits) * 10 + last(s, digits) for s in strings)
 
 
@@ -62,4 +62,3 @@ if __name__ == "__main__":
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test2())}")
     print(f"part 2 live = {solve2(live())}")
-
