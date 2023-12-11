@@ -1,8 +1,8 @@
 from io import StringIO
-
+from itertools import combinations
 import numpy as np
 
-def test1():
+def test():
     input = """\
 ...#......
 .......#..
@@ -17,11 +17,6 @@ def test1():
 """
     return StringIO(input).read().splitlines()
 
-
-def test2():
-    input = """\
-"""
-    return StringIO(input).read().splitlines()
 
 
 def live():
@@ -44,21 +39,35 @@ def expand(a: np.ndarray) -> np.ndarray:
         col += 1
     return a
 
+def distances(a: np.ndarray, delta: int) -> tuple[list[int], list[int]]:
+    x, y = a.shape
+    x = [1 + delta * (a[:, i].sum() == 0) for i in range(x)]
+    y = [1 + delta * (a[i, :].sum() == 0) for i in range(y)]
+    return x, y
+
+def distance(x0: int, x1: int, dx: list[int]) -> int:
+    return sum(dx[x0:x1]) if x0 < x1 else sum(dx[x1:x0])
+
+def solve_impl(map: list[str], delta: int) -> int:
+    a = np.array([[point == '#' for point in line] for line in map], dtype=int)
+
+    dx, dy = distances(a, delta - 1)
+    locations = list(zip(*np.where(a==1)))
+    sum = 0
+    for path in combinations(locations, 2):
+        sum += distance(path[0][0], path[1][0], dy) + distance(path[0][1], path[1][1], dx)
+    return sum
+
 
 def solve1(map: list[str]) -> int:
-    a = np.array([[point == '#' for point in line] for line in map], dtype=int)
-    print(a)
-    a = expand(a)
-    print(a)
-    return 0
+    return solve_impl(map, 2)
 
-
-def solve2(map: list[str]) -> int:
-
-    return 0
+def solve2(map: list[str], delta: int) -> int:
+    return solve_impl(map, delta)
 
 if __name__ == "__main__":
-    print(f"part 1 test = {solve1(test1())}")
-    # print(f"part 1 live = {solve1(live())}")
-    # print(f"part 2 test = {solve2(test2())}")
-    # print(f"part 2 live = {solve2(live())}")
+    print(f"part 1 test = {solve1(test())}")  # 374
+    print(f"part 1 live = {solve1(live())}") # 9681886
+    print(f"part 2 test = {solve2(test(), 10)}")
+    print(f"part 2 test = {solve2(test(), 100)}")
+    print(f"part 2 live = {solve2(live(), 1000000)}")

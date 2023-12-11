@@ -50,7 +50,7 @@ def start(map: list[str]) -> tuple[int, int, list[int]]:
     if x < len(map[0]) - 1 and map[y][x + 1] in "-J7":
         exits.append(E)
     if y < len(map) - 1 and map[y+1][x] in "|JL":
-        exits.append(S) 
+        exits.append(S)
     if x > 0 and map[y][x - 1] in "-FL":
         exits.append(W)
 
@@ -61,19 +61,19 @@ def move(map: list[str], x: int, y: int, dir: int) -> tuple[int, int, int]:
         case 0: # N
             y -= 1
             if map[y][x] == "F": dir = E
-            elif map[y][x] == "7": dir = W 
+            elif map[y][x] == "7": dir = W
         case 1: # E
             x += 1
             if map[y][x] == "J": dir = N
-            elif map[y][x] == "7": dir = S 
+            elif map[y][x] == "7": dir = S
         case 2: # S
             y += 1
             if map[y][x] == "L": dir = E
-            elif map[y][x] == "J": dir = W 
+            elif map[y][x] == "J": dir = W
         case 3: # W
             x -= 1
             if map[y][x] == "L": dir = N
-            elif map[y][x] == "F": dir = S 
+            elif map[y][x] == "F": dir = S
     return x, y, dir
 
 
@@ -91,10 +91,31 @@ def solve1(map: list[str]) -> int:
 def solve2(map: list[str]) -> int:
     route = [["."] * len(map[0]) for _ in range(len(map))]
 
-    start_x, start_y, dirs = start(map)
-    x, y, dir = start_x, start_y, dirs[0]
+    start_x, start_y, start_dirs = start(map)
+    x, y, dir = start_x, start_y, start_dirs[0]
     while True:
         route[y][x] = "*"
+        x, y, dir = move(map, x, y, dir)
+        if x == start_x and y == start_y:
+            break
+
+    for line in route:
+        print("".join(line))
+
+    # return to the start and look to the right
+    x_max = len(map[0]) - 1
+    y_max = len(map) - 1
+    x, y, dir = move(map, start_x, start_y, start_dirs[0])
+    while True:
+        match(map[y][x], dir):
+            case ("|", S):
+                if x < x_max and route[y][x + 1] == ".": route[y][x + 1] = "X"
+            case ("|", N):
+                if x > 0 and route[y][x - 1] == ".": route[y][x -1] = "X"
+            case ("-", E):
+                if y < y_max and route[y + 1][x] == ".": route[y + 1][x] = "X"
+            case ("-", W):
+                if y > 0 and route[y - 1][x] == ".": route[y - 1][x] = "X"
         x, y, dir = move(map, x, y, dir)
         if x == start_x and y == start_y:
             break
@@ -120,4 +141,4 @@ if __name__ == "__main__":
     print(f"part 1 test = {solve1(test1())}")
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test2())}")
-    print(f"part 2 live = {solve2(live())}")
+    # print(f"part 2 live = {solve2(live())}")
