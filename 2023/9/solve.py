@@ -22,28 +22,26 @@ def live():
 
 
 def solve1(strings: list[str]) -> int:
-    sum = 0
+    total = 0
     for string in strings:
         seqs = [[int(s) for s in string.split()]]
         while not all(s==seqs[-1][0] for s in seqs[-1]):
             seqs.append(diff(seqs[-1]))
-        for i in reversed(range(len(seqs) - 1)):
-            extrap = seqs[i][-1] + seqs[i+1][-1]
-            seqs[i].append(extrap)
-        sum += seqs[0][-1]
-    return sum
+        end = sum(s[-1] for s in seqs)
+        total += end
+    return total
 
 def solve2(strings: list[str]) -> int:
-    sum = 0
+    total = 0
     for string in strings:
         seqs = [[int(s) for s in string.split()]]
         while not all(s==seqs[-1][0] for s in seqs[-1]):
             seqs.append(diff(seqs[-1]))
+        end = seqs[-1][0]
         for i in reversed(range(len(seqs) - 1)):
-            extrap = seqs[i][0] - seqs[i+1][0]
-            seqs[i] = [extrap] + seqs[i] 
-        sum += seqs[0][0]
-    return sum
+            end = seqs[i][0] - end
+        total += end
+    return total
 
 
 if __name__ == "__main__":
@@ -51,3 +49,8 @@ if __name__ == "__main__":
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test())}")
     print(f"part 2 live = {solve2(live())}")
+
+# part 1 test = 114
+# part 1 live = 1974913025
+# part 2 test = 2
+# part 2 live = 884
