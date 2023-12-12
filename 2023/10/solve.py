@@ -99,46 +99,48 @@ def solve2(map: list[str]) -> int:
         if x == start_x and y == start_y:
             break
 
+    # correct S
+    if N in start_dirs:
+        if E in start_dirs:
+            map[start_y] = map[start_y].replace("S", "L")
+        elif W in start_dirs:
+            map[start_y] = map[start_y].replace("S", "J")
+        else:
+            map[start_y] = map[start_y].replace("S", "|")
+    elif S in start_dirs:
+        if E in start_dirs:
+            map[start_y] = map[start_y].replace("S", "F")
+        elif W in start_dirs:
+            map[start_y] = map[start_y].replace("S", "7")
+    else:
+        map[start_y] = map[start_y].replace("S", "-")
+
+    # count contained points
+    count = 0
+    for y, line in enumerate(route):
+        inside = False
+        for x, point in enumerate(line):
+            if point == "*" and map[y][x] in ["F", "L"]:
+                entry = map[y][x]
+            elif point == "*" and map[y][x] in ["7", "J"]:
+                if (entry == "F" and map[y][x] == "J") or (entry == "L" and map[y][x] == "7"):
+                    inside = not inside
+                # print(f"exit at {x=}, {y=}")
+            elif point == "*" and map[y][x] == "|":
+                # print(f"crossing at {x=}, {y=}")
+                inside = not inside
+            elif point == "." and inside:
+                count += 1
+                route[y][x] = "X"
+
+    for line in map:
+        print("".join(line))
     for line in route:
         print("".join(line))
-
-    # return to the start and look to the right
-    x_max = len(map[0]) - 1
-    y_max = len(map) - 1
-    x, y, dir = move(map, start_x, start_y, start_dirs[0])
-    while True:
-        match(map[y][x], dir):
-            case ("|", S):
-                if x < x_max and route[y][x + 1] == ".": route[y][x + 1] = "X"
-            case ("|", N):
-                if x > 0 and route[y][x - 1] == ".": route[y][x -1] = "X"
-            case ("-", E):
-                if y < y_max and route[y + 1][x] == ".": route[y + 1][x] = "X"
-            case ("-", W):
-                if y > 0 and route[y - 1][x] == ".": route[y - 1][x] = "X"
-        x, y, dir = move(map, x, y, dir)
-        if x == start_x and y == start_y:
-            break
-
-    # queue = [(0, 0)]
-    # route = True
-    # while queue:
-    #     x, y = queue.pop(0)
-    #     for xnew, ynew in neighbours(x, y):
-    #     if :
-    #         queue.append(n)
-    #         res[n] = True
-
-
-    for line in route:
-        print("".join(line))
-
-    total = 0
-    return total
-
+    return count
 
 if __name__ == "__main__":
     print(f"part 1 test = {solve1(test1())}")
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test2())}")
-    # print(f"part 2 live = {solve2(live())}")
+    print(f"part 2 live = {solve2(live())}")
