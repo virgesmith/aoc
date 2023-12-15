@@ -1,5 +1,6 @@
 from io import StringIO
 
+
 def test1():
     input = """\
 RL
@@ -29,6 +30,7 @@ LR
 XXX = (XXX, XXX)
 """
     return StringIO(input).read().splitlines()
+
 
 def live():
     with open("2023/8/input.txt") as fd:
@@ -79,10 +81,8 @@ def solve2(strings: list[str]) -> int:
     return total
 
 
-
 if __name__ == "__main__":
     print(f"part 1 test = {solve1(test1())}")
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test2())}")
     print(f"part 2 live = {solve2(live())}")
-

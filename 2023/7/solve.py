@@ -1,6 +1,7 @@
 from io import StringIO
 from collections import defaultdict
 
+
 def test1():
     input = """\
 32T3K 765
@@ -26,7 +27,7 @@ def count(hand: str):
     return counts
 
 
-def hand_rank(hand: str, *, wildcards: bool=False) -> int:
+def hand_rank(hand: str, *, wildcards: bool = False) -> int:
     c = count(hand)
     if wildcards and "J" in c:
         nwild = c["J"]
@@ -43,7 +44,7 @@ def hand_rank(hand: str, *, wildcards: bool=False) -> int:
     return max(c.values()) * 2
 
 
-def card_rank(hand: str, *, wildcards: bool=False) -> float:
+def card_rank(hand: str, *, wildcards: bool = False) -> float:
     rank = 0.0
     card_ranks = card_ranks1 if not wildcards else card_ranks2
     for card in hand:
@@ -62,16 +63,19 @@ def solve1(strings: list[str]) -> int:
     ranks = {hand: hand_rank(hand) + card_rank(hand) for hand in hands}
     ranks = dict(sorted(ranks.items(), key=lambda r: r[1]))
 
-    score = sum(int(hands[hand]) * (i + 1) for i, hand in enumerate(ranks.keys())) 
+    score = sum(int(hands[hand]) * (i + 1) for i, hand in enumerate(ranks.keys()))
     return score
 
 
 def solve2(strings: list[str]) -> int:
     hands = dict(s.split() for s in strings)
-    ranks = {hand: hand_rank(hand, wildcards=True) + card_rank(hand, wildcards=True) for hand in hands}
+    ranks = {
+        hand: hand_rank(hand, wildcards=True) + card_rank(hand, wildcards=True)
+        for hand in hands
+    }
     ranks = dict(sorted(ranks.items(), key=lambda r: r[1]))
 
-    score = sum(int(hands[hand]) * (i + 1) for i, hand in enumerate(ranks.keys())) 
+    score = sum(int(hands[hand]) * (i + 1) for i, hand in enumerate(ranks.keys()))
     return score
 
 

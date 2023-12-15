@@ -81,4 +81,3 @@ if __name__ == "__main__":
     print(f"part 1 live = {solve1(live())}")
     print(f"part 2 test = {solve2(test1())}")
     print(f"part 2 live = {solve2(live())}")
-

@@ -1,5 +1,6 @@
 from io import StringIO
 
+
 def test1():
     input = """\
 seeds: 79 14 55 13
@@ -64,7 +65,7 @@ def solve_impl(strings: list[str], seeds: list[int]):
                     if seed - srcs[j] >= 0 and seed - srcs[j] < lengths[j]:
                         seeds[i] += dsts[j] - srcs[j]
                         break
-            continue        
+            continue
         dst, src, length = [int(s) for s in string.split()]
         dsts.append(dst)
         srcs.append(src)
@@ -95,7 +96,7 @@ def solve2(strings: list[str]) -> int:
                     #     break
                 print(new_seeds)
             seeds = new_seeds
-            print(seeds)        
+            print(seeds)
             continue
         dst, src, length = [int(s) for s in string.split()]
         maps.append((src, length, dst - src))
@@ -103,7 +104,9 @@ def solve2(strings: list[str]) -> int:
     return 0
 
 
-def intersect_split(a: tuple[int, int, int], b: tuple[int, int]) -> list[tuple[int, int]]:
+def intersect_split(
+    a: tuple[int, int, int], b: tuple[int, int]
+) -> list[tuple[int, int]]:
     if b[0] + b[1] < a[0] and b[0] > a[0] + a[1]:
         raise ValueError("b>a!")
     elif b[0] + b[1] < a[0] or b[0] > a[0] + a[1]:
@@ -111,14 +114,15 @@ def intersect_split(a: tuple[int, int, int], b: tuple[int, int]) -> list[tuple[i
         return [b]
     elif b[0] >= a[0] and b[0] + b[1] <= a[0] + a[1]:
         print("b left intersects a")
-        return [(b[0]+a[2], b[1])]
+        return [(b[0] + a[2], b[1])]
     elif b[0] < a[0]:
         print("b right intersects a")
         x = a[0] - b[0]
-        return [(b[0], x), (a[0] + a[2], b[1] - x)] 
+        return [(b[0], x), (a[0] + a[2], b[1] - x)]
     else:
         x = a[0] + a[1] - b[0]
         return [(b[0] + a[2], x), (a[0] + a[1], b[1] - x)]
+
 
 if __name__ == "__main__":
     print(f"part 1 test = {solve1(test1())}")
@@ -126,9 +130,8 @@ if __name__ == "__main__":
     print(f"part 2 test = {solve2(test1())}")
 #    print(f"part 2 live = {solve2(live())}")
 
-    # print(intersect_split((25, 50, 100), (10, 10)))
-    # print(intersect_split((25, 50, 100), (80, 10)))
-    # print(intersect_split((25, 50, 100), (35, 10)))
-    # print(intersect_split((25, 50, 100), (20, 15)))
-    # print(intersect_split((25, 50, 100), (65, 15)))
-
+# print(intersect_split((25, 50, 100), (10, 10)))
+# print(intersect_split((25, 50, 100), (80, 10)))
+# print(intersect_split((25, 50, 100), (35, 10)))
+# print(intersect_split((25, 50, 100), (20, 15)))
+# print(intersect_split((25, 50, 100), (65, 15)))

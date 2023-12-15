@@ -1,6 +1,7 @@
 from io import StringIO
 from math import sqrt, floor, ceil
 
+
 def test1():
     input = """\
 Time:      7  15   30
@@ -13,7 +14,9 @@ def live():
     with open("2023/6/input.txt") as fd:
         return fd.read().splitlines()
 
-EPS = 1e-8 # deals with ineqality (> distance)
+
+EPS = 1e-8  # deals with ineqality (> distance)
+
 
 def bounds(time: int, record: int) -> tuple[int, int]:
     x = sqrt(time * time / 4 - record - EPS)
@@ -31,6 +34,7 @@ def solve1(strings: list[str]) -> int:
         lower, upper = bounds(time, record)
         sum *= (upper - lower) + 1
     return sum
+
 
 def solve2(strings: list[str]) -> int:
     time = int(strings[0].split(":")[1].replace(" ", ""))

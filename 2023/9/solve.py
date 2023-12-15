@@ -1,5 +1,6 @@
 from io import StringIO
 
+
 def test():
     input = """\
 0 3 6 9 12 15
@@ -7,6 +8,7 @@ def test():
 10 13 16 21 30 45
 """
     return StringIO(input).read().splitlines()
+
 
 def diff(x: list[int]) -> list[int]:
     return [xi - x[i] for i, xi in enumerate(x[1:])]
@@ -25,17 +27,18 @@ def solve1(strings: list[str]) -> int:
     total = 0
     for string in strings:
         seqs = [[int(s) for s in string.split()]]
-        while not all(s==seqs[-1][0] for s in seqs[-1]):
+        while not all(s == seqs[-1][0] for s in seqs[-1]):
             seqs.append(diff(seqs[-1]))
         end = sum(s[-1] for s in seqs)
         total += end
     return total
 
+
 def solve2(strings: list[str]) -> int:
     total = 0
     for string in strings:
         seqs = [[int(s) for s in string.split()]]
-        while not all(s==seqs[-1][0] for s in seqs[-1]):
+        while not all(s == seqs[-1][0] for s in seqs[-1]):
             seqs.append(diff(seqs[-1]))
         end = seqs[-1][0]
         for i in reversed(range(len(seqs) - 1)):
